@@ -25,7 +25,7 @@
 - Command: `torem-frontend-commands.removeApplication`
 - Description: Remove an application. You must specify the name of the application.
 
-## Recomended
+## Recommended
 
 1. Press `Ctrl + Shift + P`
 2. Select `Open keyboard shortcuts (JSON).`
