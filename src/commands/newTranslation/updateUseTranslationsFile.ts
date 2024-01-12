@@ -4,11 +4,11 @@ import escodegen from "escodegen";
 import { convertToCamelCase } from "../../utils/constantCaseToCamelCase";
 import { readFile } from "../../utils/fs/readFile";
 import { TextEncoder } from "util";
-
-const DISABLE_ESLINT_RULE_LINE = {
-  type: "ExpressionStatement",
-  value: " eslint-disable import/newline-after-import ",
-};
+import {
+  DISABLE_ESLINT_RULE_LINE,
+  DISABLE_FORMAT_COMMENT,
+} from "../../constants";
+import { getFileUri } from "../../utils/fs/getFileUri";
 
 export const updateUseTranslationsHook = async (
   selectedGroup: string,
@@ -112,7 +112,10 @@ export const updateUseTranslationsHook = async (
       }
     }
 
-    ast.body[0].leadingComments = [DISABLE_ESLINT_RULE_LINE];
+    ast.body[0].leadingComments = [
+      DISABLE_ESLINT_RULE_LINE,
+      DISABLE_FORMAT_COMMENT,
+    ];
 
     const modifiedCode = escodegen.generate(ast, {
       format: {
@@ -126,8 +129,7 @@ export const updateUseTranslationsHook = async (
       comment: true,
     });
 
-    const result = await vscode.workspace.findFiles(pathToFile);
-    const hookFile = result[0];
+    const hookFile = getFileUri(pathToFile);
 
     await vscode.workspace.fs.writeFile(
       hookFile,

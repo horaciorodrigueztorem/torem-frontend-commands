@@ -1,11 +1,13 @@
+import * as path from "path";
 import * as vscode from "vscode";
+import { getFileUri } from "./getFileUri";
 
-export const readFile = async (pathToFile: string) => {
+export const readFile = async (relativePathToFile: string) => {
   try {
-    const result = await vscode.workspace.findFiles(pathToFile);
-    const esLAFile = result[0];
+    const uri = getFileUri(relativePathToFile);
 
-    const file = await vscode.workspace.fs.readFile(esLAFile);
+    const file = await vscode.workspace.fs.readFile(uri);
+
     const buffer = Buffer.from(file);
 
     return Promise.resolve(buffer.toString());

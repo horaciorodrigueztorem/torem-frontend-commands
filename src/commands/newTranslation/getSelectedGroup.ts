@@ -1,11 +1,15 @@
+import { Node } from "acorn";
 import * as vscode from "vscode";
+import getASTbody from "../shared/getASTbody";
 
 const NEW_OPTION_TEXT = "Add a New Group";
 const GROUP_PLACEHOLDER = "Insert the new translations group name:";
 
 export const getSelectedGroup = async (ast: any): Promise<string> => {
   try {
-    const groups = ast.body[2].declaration.declarations[0].init.properties.map(
+    const body = getASTbody(ast);
+
+    const groups = body.init.properties.map(
       (property: any) => property.key.name
     );
 

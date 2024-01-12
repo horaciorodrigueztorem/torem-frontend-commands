@@ -35,12 +35,12 @@
         "appsConfig": {
           "default": {
             "mobile": {
-              "esLaPath": "/apps/mobile/src/i18n/lang/es-LA.ts",
-              "useTranslationsPath": "/apps/mobile/src/hooks/useTranslations.ts"
+              "esLaPath": "apps/mobile/src/i18n/lang/es-LA.ts",
+              "useTranslationsPath": "apps/mobile/src/hooks/useTranslations.ts"
             },
             "webapp": {
-              "esLaPath": "/apps/webapp/src/i18n/lang/es-LA.ts",
-              "useTranslationsPath": "/apps/webapp/src/hooks/useTranslations.ts"
+              "esLaPath": "apps/webapp/src/i18n/lang/es-LA.ts",
+              "useTranslationsPath": "apps/webapp/src/hooks/useTranslations.ts"
             }
           }
         },

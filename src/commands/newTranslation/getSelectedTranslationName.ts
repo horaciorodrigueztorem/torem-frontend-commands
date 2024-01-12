@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import getASTbody from "../shared/getASTbody";
 
 const NEW_OPTION_TEXT = "Add a New Translation";
 const TRANSLATION_NAME_PLACEHOLDER = "Insert the new translation name:";
@@ -8,11 +9,12 @@ export const getSelectedTranslationName = async (
   group: string
 ): Promise<string> => {
   try {
-    const groupIndex =
-      ast.body[2].declaration.declarations[0].init.properties.findIndex(
-        (property: any) =>
-          property.key.type === "Identifier" && property.key.name === group
-      );
+    const body = getASTbody(ast);
+
+    const groupIndex = body.init.properties.findIndex(
+      (property: any) =>
+        property.key.type === "Identifier" && property.key.name === group
+    );
 
     let translationName;
 
@@ -26,10 +28,9 @@ export const getSelectedTranslationName = async (
     }
 
     if (groupIndex !== -1) {
-      const translations =
-        ast.body[2].declaration.declarations[0].init.properties[
-          groupIndex
-        ].value.properties.map((property: any) => property.key.name);
+      const translations = body.init.properties[
+        groupIndex
+      ].value.properties.map((property: any) => property.key.name);
 
       const selectedTranslation = await vscode.window.showQuickPick(
         [NEW_OPTION_TEXT, ...translations],

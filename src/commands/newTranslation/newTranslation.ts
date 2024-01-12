@@ -20,12 +20,16 @@ export const handleNewTranslation = async () => {
 
     const config = appsConfig[application];
 
+    console.log(config);
+
     const file = await readFile(config.esLaPath);
 
     const esLaAST = parse(file, {
       sourceType: "module",
       ecmaVersion: "latest",
-    }) as any;
+    });
+
+    console.log(esLaAST);
 
     const selectedGroup = await getSelectedGroup(esLaAST);
     const name = await getSelectedTranslationName(esLaAST, selectedGroup);

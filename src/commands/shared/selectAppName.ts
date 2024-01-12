@@ -5,7 +5,10 @@ import getConfigurationProperty from "../../utils/config/getConfigurationPropert
 export default async function selectAppName() {
   const apps = getConfigurationProperty(ConfigProperty.apps);
 
-  const selectedAppName = await vscode.window.showQuickPick(apps);
+  const selectedAppName = await vscode.window.showQuickPick(apps, {
+    title: "Select the app",
+    placeHolder: "Write here",
+  });
 
   if (!selectedAppName) {
     return Promise.reject("No app selected");

@@ -1,11 +1,12 @@
 import * as vscode from "vscode";
 import escodegen from "escodegen";
 import { TextEncoder } from "util";
-
-const DISABLE_ESLINT_RULE_LINE = {
-  type: "ExpressionStatement",
-  value: " eslint-disable import/newline-after-import ",
-};
+import getASTbody from "../shared/getASTbody";
+import {
+  DISABLE_ESLINT_RULE_LINE,
+  DISABLE_FORMAT_COMMENT,
+} from "../../constants";
+import { getFileUri } from "../../utils/fs/getFileUri";
 
 export const updateEsLaFile = async (
   ast: any,
@@ -15,12 +16,13 @@ export const updateEsLaFile = async (
   pathToFile: string
 ) => {
   try {
-    const groupIndex =
-      ast.body[2].declaration.declarations[0].init.properties.findIndex(
-        (property: any) =>
-          property.key.type === "Identifier" &&
-          property.key.name === selectedGroup
-      );
+    const body = getASTbody(ast);
+
+    const groupIndex = body.init.properties.findIndex(
+      (property: any) =>
+        property.key.type === "Identifier" &&
+        property.key.name === selectedGroup
+    );
 
     if (groupIndex === -1) {
       const newGroup = {
@@ -50,23 +52,22 @@ export const updateEsLaFile = async (
         },
       };
 
-      ast.body[2].declaration.declarations[0].init.properties.push(newGroup);
+      body.init.properties.push(newGroup);
     }
 
     if (groupIndex !== -1) {
-      const translationNameIndex =
-        ast.body[2].declaration.declarations[0].init.properties[
-          groupIndex
-        ].value.properties.findIndex(
-          (property: any) =>
-            property.key.type === "Identifier" &&
-            property.key.name === translationName
-        );
+      const translationNameIndex = body.init.properties[
+        groupIndex
+      ].value.properties.findIndex(
+        (property: any) =>
+          property.key.type === "Identifier" &&
+          property.key.name === translationName
+      );
 
       if (translationNameIndex !== -1) {
-        ast.body[2].declaration.declarations[0].init.properties[
-          groupIndex
-        ].value.properties[translationNameIndex].value.value = translationText;
+        body.init.properties[groupIndex].value.properties[
+          translationNameIndex
+        ].value.value = translationText;
       } else {
         const newValue = {
           type: "Property",
@@ -82,13 +83,14 @@ export const updateEsLaFile = async (
           },
         };
 
-        ast.body[2].declaration.declarations[0].init.properties[
-          groupIndex
-        ].value.properties.push(newValue);
+        body.init.properties[groupIndex].value.properties.push(newValue);
       }
     }
 
-    ast.body[0].leadingComments = [DISABLE_ESLINT_RULE_LINE];
+    ast.body[0].leadingComments = [
+      DISABLE_ESLINT_RULE_LINE,
+      DISABLE_FORMAT_COMMENT,
+    ];
 
     const modifiedCode = escodegen.generate(ast, {
       format: {
@@ -102,8 +104,7 @@ export const updateEsLaFile = async (
       comment: true,
     });
 
-    const result = await vscode.workspace.findFiles(pathToFile);
-    const esLAFile = result[0];
+    const esLAFile = getFileUri(pathToFile);
 
     await vscode.workspace.fs.writeFile(
       esLAFile,
