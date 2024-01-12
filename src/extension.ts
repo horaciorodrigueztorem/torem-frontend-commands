@@ -2,9 +2,11 @@ import * as vscode from "vscode";
 import { handleNewTranslation } from "./commands/newTranslation/newTranslation";
 import { showErrorTextNotification } from "./utils/showErrorTextNotification";
 import { showTextNotification } from "./utils/showTextNotification";
+import { handleAddNewToremApp } from "./commands/addNewApp/addNewToremApp";
+import removeApp from "./commands/removeApp/removeApp";
 
 export function activate(context: vscode.ExtensionContext) {
-  const disposable = vscode.commands.registerCommand(
+  const newTranslation = vscode.commands.registerCommand(
     "torem-frontend-commands.newTranslation",
     () =>
       handleNewTranslation()
@@ -12,7 +14,23 @@ export function activate(context: vscode.ExtensionContext) {
         .catch((e) => showErrorTextNotification(e.message))
   );
 
-  context.subscriptions.push(disposable);
+  const newApplication = vscode.commands.registerCommand(
+    "torem-frontend-commands.newApplication",
+    () =>
+      handleAddNewToremApp()
+        .then(showTextNotification)
+        .catch((e) => showErrorTextNotification(e.message))
+  );
+
+  const removeApplication = vscode.commands.registerCommand(
+    "torem-frontend-commands.removeApplication",
+    () =>
+      removeApp()
+        .then(showTextNotification)
+        .catch((e) => showErrorTextNotification(e.message))
+  );
+
+  context.subscriptions.push(newTranslation, newApplication, removeApplication);
 }
 
 // This method is called when your extension is deactivated

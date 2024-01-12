@@ -3,7 +3,7 @@
   "displayName": "Torem Frontend Commands",
   "description": "Useful commands for Torem Frontend Repository",
   "publisher": "RodriguezHoracio",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "repository": {
     "url": "https://github.com/horaciorodrigueztorem/torem-frontend-commands.git"
   },
@@ -20,15 +20,35 @@
       {
         "command": "torem-frontend-commands.newTranslation",
         "title": "New INTL Translation"
+      },
+      {
+        "command": "torem-frontend-commands.newApplication",
+        "title": "New Torem INTL Application"
+      },
+      {
+        "command": "torem-frontend-commands.removeApplication",
+        "title": "Remove Torem INTL Application"
       }
     ],
     "configuration": {
       "properties": {
-        "pathToEsLaFile": {
-          "default": "src/i18n/lang/es-LA.ts"
+        "appsConfig": {
+          "default": {
+            "mobile": {
+              "esLaPath": "/apps/mobile/src/i18n/lang/es-LA.ts",
+              "useTranslationsPath": "/apps/mobile/src/hooks/useTranslations.ts"
+            },
+            "webapp": {
+              "esLaPath": "/apps/webapp/src/i18n/lang/es-LA.ts",
+              "useTranslationsPath": "/apps/webapp/src/hooks/useTranslations.ts"
+            }
+          }
         },
-        "pathToUseTranslationHook": {
-          "default": "src/hooks/useTranslations.ts"
+        "apps": {
+          "default": [
+            "webapp",
+            "mobile"
+          ]
         }
       }
     }

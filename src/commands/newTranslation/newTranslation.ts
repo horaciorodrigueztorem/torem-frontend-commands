@@ -1,18 +1,26 @@
 import { parse } from "acorn";
-import { readFile } from "../../utils/readFile";
-import { formatFile } from "../../utils/FormatFile";
+import { readFile } from "../../utils/fs/readFile";
+import { formatFile } from "../../utils/fs/FormatFile";
 import { getSelectedGroup } from "./getSelectedGroup";
 import { getSelectedTranslationName } from "./getSelectedTranslationName";
 import { getTranslationText } from "./getTranslationText";
 import { updateEsLaFile } from "./updateEsLaFile";
 import { updateUseTranslationsHook } from "./updateUseTranslationsFile";
-import { saveAll } from "../../utils/saveAll";
-
-const PATH_TO_ES_LA = "src/i18n/lang/es-LA.ts";
+import { saveAll } from "../../utils/fs/saveAll";
+import * as vscode from "vscode";
+import selectAppName from "../shared/selectAppName";
+import getConfigurationProperty from "../../utils/config/getConfigurationProperty";
+import { ConfigProperty } from "../../types/config.interface";
 
 export const handleNewTranslation = async () => {
   try {
-    const file = await readFile(PATH_TO_ES_LA);
+    const application = await selectAppName();
+
+    const appsConfig = getConfigurationProperty(ConfigProperty.appsConfig);
+
+    const config = appsConfig[application];
+
+    const file = await readFile(config.esLaPath);
 
     const esLaAST = parse(file, {
       sourceType: "module",
@@ -23,8 +31,13 @@ export const handleNewTranslation = async () => {
     const name = await getSelectedTranslationName(esLaAST, selectedGroup);
     const text = await getTranslationText();
 
-    await updateEsLaFile(esLaAST, selectedGroup, name, text).then(formatFile);
-    await updateUseTranslationsHook(selectedGroup, name).then(formatFile);
+    await updateEsLaFile(esLaAST, selectedGroup, name, text, config.esLaPath);
+
+    await updateUseTranslationsHook(
+      selectedGroup,
+      name,
+      config.useTranslationsPath
+    );
 
     await saveAll();
 

@@ -2,7 +2,6 @@ import * as vscode from "vscode";
 import escodegen from "escodegen";
 import { TextEncoder } from "util";
 
-const PATH_TO_ES_LA = "src/i18n/lang/es-LA.ts";
 const DISABLE_ESLINT_RULE_LINE = {
   type: "ExpressionStatement",
   value: " eslint-disable import/newline-after-import ",
@@ -12,7 +11,8 @@ export const updateEsLaFile = async (
   ast: any,
   selectedGroup: string,
   translationName: string,
-  translationText: string
+  translationText: string,
+  pathToFile: string
 ) => {
   try {
     const groupIndex =
@@ -102,7 +102,7 @@ export const updateEsLaFile = async (
       comment: true,
     });
 
-    const result = await vscode.workspace.findFiles(PATH_TO_ES_LA);
+    const result = await vscode.workspace.findFiles(pathToFile);
     const esLAFile = result[0];
 
     await vscode.workspace.fs.writeFile(
@@ -110,7 +110,7 @@ export const updateEsLaFile = async (
       new TextEncoder().encode(modifiedCode)
     );
 
-    return Promise.resolve(PATH_TO_ES_LA);
+    return Promise.resolve(pathToFile);
   } catch (error) {
     return Promise.reject(error);
   }

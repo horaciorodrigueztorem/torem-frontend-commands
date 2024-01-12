@@ -2,10 +2,9 @@ import * as vscode from "vscode";
 import { parse } from "acorn";
 import escodegen from "escodegen";
 import { convertToCamelCase } from "../../utils/constantCaseToCamelCase";
-import { readFile } from "../../utils/readFile";
+import { readFile } from "../../utils/fs/readFile";
 import { TextEncoder } from "util";
 
-const PATH_TO_HOOK = "src/hooks/useTranslations.ts";
 const DISABLE_ESLINT_RULE_LINE = {
   type: "ExpressionStatement",
   value: " eslint-disable import/newline-after-import ",
@@ -13,10 +12,11 @@ const DISABLE_ESLINT_RULE_LINE = {
 
 export const updateUseTranslationsHook = async (
   selectedGroup: string,
-  translationName: string
+  translationName: string,
+  pathToFile: string
 ) => {
   try {
-    const file = await readFile(PATH_TO_HOOK);
+    const file = await readFile(pathToFile);
     const ast = parse(file, {
       sourceType: "module",
       ecmaVersion: "latest",
@@ -126,7 +126,7 @@ export const updateUseTranslationsHook = async (
       comment: true,
     });
 
-    const result = await vscode.workspace.findFiles(PATH_TO_HOOK);
+    const result = await vscode.workspace.findFiles(pathToFile);
     const hookFile = result[0];
 
     await vscode.workspace.fs.writeFile(
@@ -134,7 +134,7 @@ export const updateUseTranslationsHook = async (
       new TextEncoder().encode(modifiedCode)
     );
 
-    return Promise.resolve(PATH_TO_HOOK);
+    return Promise.resolve(pathToFile);
   } catch (error) {
     return Promise.reject(error);
   }
