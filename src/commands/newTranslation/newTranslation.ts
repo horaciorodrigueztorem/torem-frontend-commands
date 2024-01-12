@@ -43,8 +43,6 @@ export const handleNewTranslation = async () => {
       config.useTranslationsPath
     );
 
-    await saveAll();
-
     return Promise.resolve("Files were succesfully updated");
   } catch (error) {
     return Promise.reject(error);
